@@ -1,0 +1,12 @@
+name: Adipa Wijayathilaka
+url: http://example.org
+description: A stylish blog using the Solarized color palette
+
+gems: [jekyll-paginate]
+
+permalink: /:year/:month/:day/:title/
+paginate: 10
+highlighter: rouge
+
+
+exclude: ['README.md', 'Gemfile.lock', 'Gemfile', 'Rakefile']
