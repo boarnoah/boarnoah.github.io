@@ -246,7 +246,37 @@ img.center {
 
 }
 
+/*** Nav UI ***/
+/*
+.hoverList{
+	background-color: #002a35;
+    color: #2aa198;
+	text-align: right;
+    padding-bottom: 2px;
+	padding-right: 1px;
+	padding-left: 1px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
 
+.hoverList:hover{
+	background-color: #073642;
+}
+*/
+/*
+
+a, a:active, a:visited {
+	text-decoration: none;
+	border-bottom: 1px solid #839496;
+	padding-bottom: 2px;
+}
+a:hover {
+	background-color: #839496;
+	color: #000000;
+}
+
+*/
 
 /*** Icons ***/
 @font-face {
@@ -304,4 +334,12 @@ img.center {
 
 .fa-rocket:before {
   content: "\f135";
+}
+
+.fa-github:before{
+  content: "\f09b";
+}
+
+.fa-steam:before{
+  content: "\f1b6";
 }
