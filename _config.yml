@@ -6,7 +6,7 @@ gems: [jekyll-paginate]
 
 permalink: /:year/:month/:day/:title/
 paginate: 10
-highlighter: rouge
+highlighter: pygments
 
 
 exclude: ['README.md', 'Gemfile.lock', 'Gemfile', 'Rakefile']
