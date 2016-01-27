@@ -109,13 +109,13 @@ h3 {
 
 /*** Structure ***/
 #page {
-	width: 500px;
+	width: 70%;
 	margin: 0 auto;
 	position: relative;
 }
 
 #header {
-	width: 500px;
+	width: 70%;
 	margin: 40px auto 50px auto;
 }
 #header h1 {
@@ -127,7 +127,7 @@ h3 {
 }
 
 #footer {
-	width: 500px;
+	width: 70%;
 	margin: 50px auto 20px auto;
 	padding-top: 10px;
 	font-size: 0.85em;
@@ -135,7 +135,7 @@ h3 {
 }
 
 #content {
-	width: 500px;
+	width: 100%;
 	margin: 0 auto;
 }
 
@@ -181,6 +181,8 @@ article img {
 	display: block;
 	text-align: center;
 	margin: 0 auto 1em auto;
+	width: 70%;
+	height: auto;
 }
 
 article .meta {
