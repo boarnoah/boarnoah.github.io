@@ -345,3 +345,8 @@ a:hover {
 .fa-steam:before{
   content: "\f1b6";
 }
+
+.fa-plus:before{
+  content: "\f067";
+  color: #859900;
+}
