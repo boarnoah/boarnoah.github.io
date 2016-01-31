@@ -23,22 +23,23 @@ tags: utility geolocation google-maps
 	</div>
 	<div style="width: 25%; float: left">
 		<div id="formatBox">
-			<button type="button">Refresh Data</button>
-			<button type="button">Download Data</button>
+			<button id="refreshBtn" type="button">Refresh Data</button>
+			<button id="downloadBtn" type="button">Download Data</button>
 			<br>
 			<span><b>Format:</b></span>
-			<form>
-				<input type="radio" name="formatType" value="fromatJSON" checked>JSON<br>
-				<input type="radio" name="formatType" value="formatCSV" checked>CSV<br>
+			<form id="formatForm">
+				<input type="radio" name="formatType" value="oJSON" checked>JSON<br>
+				<input type="radio" name="formatType" value="oCSV">CSV<br>
 			</form>
 			<span><b>Data:</b></span>
-			<form>
-				<input type="checkbox" name="dataList" value="latCheck" checked>Latitude<br>
-				<input type="checkbox" name="dataList" value="longCheck" checked>Longitude<br>
-				<input type="checkbox" name="dataList" value="addrCheck" checked>Address<br>
-				<input type="checkbox" name="dataList" value="cityCheck" checked>City<br>
-				<input type="checkbox" name="dataList" value="provinceCheck" checked>State/Province<br>
-				<input type="checkbox" name="dataList" value="countryCheck" checked>Country<br>
+			<form id ="dataForm">
+				<input type="checkbox" name="dataList" id="oLat" checked>Latitude<br>
+				<input type="checkbox" name="dataList" id="oLong" checked>Longitude<br>
+				<span>The below may be slow/disabled:</span><br>
+				<input type="checkbox" name="dataList" id="oAddr">Address<br>
+				<input type="checkbox" name="dataList" id="oCity">City<br>
+				<input type="checkbox" name="dataList" id="oProvince">State/Province<br>
+				<input type="checkbox" name="dataList" id="oCountry">Country<br>
 			</form>
 		</div>
 	</div>
