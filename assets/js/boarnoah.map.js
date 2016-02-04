@@ -7,6 +7,17 @@ var markers;
 var outputData;
 var oSettings = {};
 
+function Marker(e){
+	var gMarker = e.gMarker ? e.gMarker : null;
+	var key = e.key ? e.key : null;
+	var lat = e.lat ? e.lat : null;
+	var lng = e.lng ? e.lng : null;
+	var addr = e.addr ? e.addr : null;
+	var city = e.city ? e.city : null;
+	var province = e.province ? e.province : null;
+	var country = e.country ? e.country : null;
+}
+
 $(document).ready(function() {
 	//Load Google Maps Lib (use non key version when testing locally)
 	//$.getScript("https://maps.googleapis.com/maps/api/js?libraries=places", loadMap);
@@ -66,19 +77,22 @@ function initSearchbar(){
 
 function initMarkerEvent(){
 	map.addListener('click', function(e){
-		var marker = new google.maps.Marker({
+		var marker = new Marker({});
+		
+		var gMarker = new google.maps.Marker({
 			position: e.latLng,
 			map: map,
+			parent: marker
+		});
+
+		gMarker.addListener('click', function(e){
+			this.setMap(null);
+			markers[this.parent.key] = null;
 		});
 		
-		marker.addListener('click', function(e){
-			var index = this.key;
-			markers[index].setMap(null);
-			markers[index] = null;
-			//updateSettings();
-			//updateData();
-		});
-		
+		marker.gMarker = gMarker;
+		marker.lat = gMarker.getPosition().lat();
+		marker.lng = gMarker.getPosition().lng();
 		markers.push(marker);
 		marker.key = markers.length - 1;
 	});
@@ -140,9 +154,9 @@ function renderData(){
 				var marker = markers[i];
 				
 				if(oSettings.oLat)
-					node.Latitude = marker.getPosition().lat();
+					node.Latitude = marker.lat;
 				if(oSettings.oLong)
-					node.Longitude = marker.getPosition().lng();
+					node.Longitude = marker.lng;
 				oDataArray.push(node);
 			}
 		}
@@ -155,9 +169,9 @@ function renderData(){
 			if(markers[i] != null){
 				var marker = markers[i];
 				if(oSettings.oLat)
-					oDataString += '\"' + marker.getPosition().lat() + '\", ';
+					oDataString += '\"' + marker.lat + '\", ';
 				if(oSettings.oLong)
-					oDataString += '\"' + marker.getPosition().lng() + '\"';
+					oDataString += '\"' + marker.lng + '\"';
 				
 				oDataString += '\n';
 			}
