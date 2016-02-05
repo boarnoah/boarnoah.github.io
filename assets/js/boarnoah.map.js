@@ -35,8 +35,10 @@ function loadMap(){
 	
 	initSearchbar();
 	initMarkerEvent();
+	updateSettings();
 	
 	$('#refreshBtn').click(renderData);
+	$('#dataForm').change(updateSettings);
 	loaded = true;
 }
 
@@ -95,15 +97,22 @@ function initMarkerEvent(){
 		marker.lng = gMarker.getPosition().lng();
 		markers.push(marker);
 		marker.key = markers.length - 1;
+		
+		if(oSettings.needGeoCode)
+			rgeocode(marker);
 	});
 }
 
-function updateData(){
+// for when the user decides to enable geocoded details AFTER they marked points 
+// on the map
+function batchGeocode(){
 	if(oSettings.needGeoCode == true){
+		var delayTime = 200; //Google throttles at < 200ms 
+		var delayIndex = 0;
+		
 		for(i = 0; i < markers.length; i++){
 			var marker = markers[i];
 			if(marker != null){
-				// Only geocode if it hasn't already been done
 				var hasData = true;
 				
 				if(oSettings.oAddr && marker.addr == null)
@@ -115,11 +124,20 @@ function updateData(){
 				if(oSettings.oCountry && marker.country == null)
 					hasData = false;
 				
-				if(hasData == false)
-					rgeocode(marker);
+				// Only geocode if it hasn't already been done
+				if(hasData == false){
+					batchTimeOut(marker, (delayTime * delayIndex));
+					delayIndex++;
+				}
 			}
 		}
 	}
+}
+
+function batchTimeOut(marker, delay){
+	setTimeout(function(){
+		rgeocode(marker);
+	}, delay);
 }
 
 function updateSettings(){
@@ -139,12 +157,12 @@ function updateSettings(){
 }
 
 function rgeocode(marker){
-	
+	marker.hasData = true;
 }
 
 function renderData(){
 	updateSettings();
-	
+	batchGeocode();
 	if(oSettings.format == 'oJSON'){
 		var oDataArray = new Array();
 		
