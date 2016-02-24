@@ -1,0 +1,11 @@
+{
+	"applinks": {
+		"apps": [],
+		"details": [
+			{
+				"appID": "44477JMU3U.ca.save.dev",
+				"paths": ["/flyers/?*"]
+			}
+		]
+	}
+}
