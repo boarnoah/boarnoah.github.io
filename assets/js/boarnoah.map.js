@@ -1,13 +1,13 @@
 var map;
-var loaded = false;
 var inputBox;
 var searchBox;
 
-var markers;
+var markers = new Array();
 var outputData;
 var oSettings = {};
 
 function Marker(e){
+	var e = e ? e : null;
 	var gMarker = e.gMarker ? e.gMarker : null;
 	var key = e.key ? e.key : null;
 	var lat = e.lat ? e.lat : null;
@@ -25,21 +25,27 @@ $(document).ready(function() {
 });
 
 function loadMap(){
-	//alert("knock knock mother truckers");
 	map = new google.maps.Map(document.getElementById('mapDiv'), {
 		center: {lat: 0, lng: 0},
 		zoom: 2
 	});
 	
-	markers = new Array();
-	
 	initSearchbar();
 	initMarkerEvent();
 	updateSettings();
 	
-	$('#refreshBtn').click(renderData);
-	$('#dataForm').change(updateSettings);
-	loaded = true;
+	$('#dataForm').change(function(){
+		updateSettings();
+		
+		if(oSettings.needGeoCode){
+		}else{
+			renderData();
+		}
+	});
+	$('#formatForm input[name=formatType]').change(function(){
+		updateSettings();
+		renderData();
+	});
 }
 
 //https://developers.google.com/maps/documentation/javascript/examples/places-searchbox
@@ -90,6 +96,8 @@ function initMarkerEvent(){
 		gMarker.addListener('click', function(e){
 			this.setMap(null);
 			markers[this.parent.key] = null;
+			updateSettings();
+			renderData();
 		});
 		
 		marker.gMarker = gMarker;
@@ -98,8 +106,12 @@ function initMarkerEvent(){
 		markers.push(marker);
 		marker.key = markers.length - 1;
 		
-		if(oSettings.needGeoCode)
-			rgeocode(marker);
+		if(oSettings.needGeoCode){
+			renderData(); //To add point, rerendered when geocode data comes in
+		}else{
+			updateSettings();
+			renderData();
+		}
 	});
 }
 
@@ -161,8 +173,6 @@ function rgeocode(marker){
 }
 
 function renderData(){
-	updateSettings();
-	batchGeocode();
 	if(oSettings.format == 'oJSON'){
 		var oDataArray = new Array();
 		
@@ -175,6 +185,8 @@ function renderData(){
 					node.Latitude = marker.lat;
 				if(oSettings.oLong)
 					node.Longitude = marker.lng;
+				if(oSettings.oAddr)
+					node.Address = marker.addr;
 				oDataArray.push(node);
 			}
 		}
@@ -187,9 +199,11 @@ function renderData(){
 			if(markers[i] != null){
 				var marker = markers[i];
 				if(oSettings.oLat)
-					oDataString += '\"' + marker.lat + '\", ';
+					oDataString += '\"' + marker.lat + '\"';
 				if(oSettings.oLong)
-					oDataString += '\"' + marker.lng + '\"';
+					oDataString += ', \"' + marker.lng + '\"';
+				if(oSettings.oAddr)
+					oDataString += ', \"' + marker.addr + '\"';
 				
 				oDataString += '\n';
 			}
