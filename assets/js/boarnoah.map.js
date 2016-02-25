@@ -1,4 +1,5 @@
 var map;
+var geocoder;
 var inputBox;
 var searchBox;
 
@@ -29,6 +30,7 @@ function loadMap(){
 		center: {lat: 0, lng: 0},
 		zoom: 2
 	});
+	geocoder = new google.maps.Geocoder;
 	
 	initSearchbar();
 	initMarkerEvent();
@@ -38,6 +40,7 @@ function loadMap(){
 		updateSettings();
 		
 		if(oSettings.needGeoCode){
+			batchGeocode();
 		}else{
 			renderData();
 		}
@@ -108,6 +111,12 @@ function initMarkerEvent(){
 		
 		if(oSettings.needGeoCode){
 			renderData(); //To add point, rerendered when geocode data comes in
+			rgeocode(marker, 3, function(e){
+				if(e.sucess){
+					updateSettings();
+					renderData();
+				}
+			});
 		}else{
 			updateSettings();
 			renderData();
@@ -115,41 +124,31 @@ function initMarkerEvent(){
 	});
 }
 
-// for when the user decides to enable geocoded details AFTER they marked points 
-// on the map
-function batchGeocode(){
-	if(oSettings.needGeoCode == true){
-		var delayTime = 200; //Google throttles at < 200ms 
-		var delayIndex = 0;
-		
-		for(i = 0; i < markers.length; i++){
-			var marker = markers[i];
-			if(marker != null){
-				var hasData = true;
-				
-				if(oSettings.oAddr && marker.addr == null)
-					hasData = false;
-				if(oSettings.oCity && marker.city == null)
-					hasData = false;
-				if(oSettings.oProvince && marker.province == null)
-					hasData = false;				
-				if(oSettings.oCountry && marker.country == null)
-					hasData = false;
-				
-				// Only geocode if it hasn't already been done
-				if(hasData == false){
-					batchTimeOut(marker, (delayTime * delayIndex));
-					delayIndex++;
-				}
-			}
+// for when the user decides to enable geocoded details AFTER they marked points >.<
+function batchGeocode(callback){
+	var geocodeNum = 0;
+	for(i = 0; i < markers.length; i++){
+		if(markers[i] != null && markers[i].addr == null){
+			batchSingleRequest(i, geocodeNum, callback);
+			geocodeNum++;
 		}
 	}
+	
+	renderData(); //Render for when all points are already geocoded (else its rendered as par to async code)
 }
-
-function batchTimeOut(marker, delay){
+function batchSingleRequest(i, geocodeNum, callback){
+	console.log("BATCHING: " + i);
 	setTimeout(function(){
-		rgeocode(marker);
-	}, delay);
+		rgeocode(markers[i], 3, function(e){
+			console.log(i + "CB " + e.sucess);
+			if(e.sucess){
+				updateSettings();
+				renderData();
+			}else{
+				console.log("STAT" + e.status);
+			}
+		});
+	}, (geocodeNum * 500));
 }
 
 function updateSettings(){
@@ -159,17 +158,41 @@ function updateSettings(){
 	oSettings.oLong = $('#oLong').prop('checked');
 	
 	oSettings.oAddr = $('#oAddr').prop('checked');
-	oSettings.oCity = $('#oCity').prop('checked');
-	oSettings.oProvince = $('#oProvince').prop('checked');
-	oSettings.oCountry = $('#oCountry').prop('checked');
 	
 	//Address info will require reverse geocoding on the lat/long data
-	if(oSettings.oAddr || oSettings.oCity || oSettings.oProvince || oSettings.Country)
+	if(oSettings.oAddr === true)
 		oSettings.needGeoCode = true;
+	else
+		oSettings.needGeoCode = false;
 }
 
-function rgeocode(marker){
-	marker.hasData = true;
+function rgeocode(marker, retry, callback){
+	callback = callback ? callback : function(){};
+	geocoder.geocode({'location' : marker.gMarker.getPosition()}, function(results, status){
+		if(status === google.maps.GeocoderStatus.OK){
+			//Format + store address, only really care if a detailed address exists
+			marker.raw = results;
+			if(results[0])
+				marker.addr = results[0].formatted_address;
+			
+			callback({sucess : true});
+		}else if(status === google.maps.GeocoderStatus.ZERO_RESULTS){
+			marker.raw = results;
+			marker.addr = "no address";
+			callback({sucess : true});
+		}else if(status === google.maps.GeocoderStatus.OVER_QUERY_LIMIT){
+			if(retry > 0){
+				retry--;
+				setTimeout(function(){
+					rgeocode(marker, retry, callback);
+				}, (1000 * (3 - retry))); //Exponential Backoff
+			}else{
+				callback({sucess : false, status: "OVER_QUERY_LIMIT"});
+			}
+		}else{
+			callback({sucess : false, status: "OTHER"});
+		}
+	});
 }
 
 function renderData(){
