@@ -7,39 +7,25 @@ tags: utility geolocation google-maps
 <link href="/assets/css/map-page.css" rel="stylesheet" />
 <script src="/assets/js/boarnoah.map.js" async></script>
 
-<p>Allows you to output coordinate + address data to JSON/CSV by placing markers 
-on a map. Originally made to aid with some store location data scraping off websites.
-<br>
-Example uses:
-<ul>
-  <li type="circle">You will probably know if you need it.</li>
-  <li type="circle">Creating a list of geolocated points to test/web-scrape an 
-  api that takes in location.</li>
-  <li type="circle">Ghetto target location for your doomsday device(s). Consider 
-  giving me a warning please.</li>
-</ul>
+<p>
+	Generate coordinate and address data by placing markers on a map.<br>
+	Originally created to assist with store location webscraping.
+</P>
+<span><b>How to use:</b></span>
+<p>Select desired format and data, then place markers on the map</p>
 <a href="http://www.doogal.co.uk/">doogal.co.uk</a> has an assortment of geolocation 
 related tools that will be handy with this data.
 <br>
 If this came in handy, please share it around. If it was broken I would appreciate if
 you could open a ticket <a href="https://github.com/boarnoah/boarnoah.github.io/issues">here.</a>
 </p>
-<span><b>How to use:</b></span>
-<p>Click to place markers, copy/download the coordinates at the bottom</p>
 <span><b>Not working/slow?</b></span>
-<p>Trying to include data that requires reverse geolocation (anything 
-other than coordinates)? Google's service throttles the number of requests, and you 
-may have run into this. If you desperately need to run this for a huge number of points, 
-grab the <a href="https://github.com/boarnoah/boarnoah.github.io">source code</a>
-and change the API key's to your own. Contact me if you need help untangling the relevant 
-sections form my Jekyll site.
+<p>Address data requires Google Places API which has a maximum limit per ip and 
+throttles for multiple request. If you desperately need to generate a large number 
+of points, grab the <a href="https://github.com/boarnoah/boarnoah.github.io">source code</a>
+for this page and change the API key's to your own. Contact me if you need help 
+untangling the relevant sections form my Jekyll site.
 </p>
-<div class="wrapper">
-	<input id="pac-input" class="controls" type="text" placeholder="Search Box">
-	<div id="mapDiv"class="aspectBox">
-		Google Maps (16:9) Aspect Ratio
-	</div>
-</div>
 <p><b>Output:</b></p>
 <div style="overflow:hidden;">
 	<div style="width: 75%;  float: left">
@@ -62,6 +48,13 @@ sections form my Jekyll site.
 				<input type="checkbox" name="dataList" id="oAddr">Address<br>
 			</form>
 		</div>
+	</div>
+</div>
+<br>
+<div class="wrapper">
+	<input id="pac-input" class="controls" type="text" placeholder="Search Box">
+	<div id="mapDiv"class="aspectBox">
+		Google Maps (16:9) Aspect Ratio
 	</div>
 </div>
 
