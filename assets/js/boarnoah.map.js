@@ -49,6 +49,11 @@ function loadMap(){
 		updateSettings();
 		renderData();
 	});
+	
+	$('#downloadBtn').click($.b_debounce(function(){
+		updateSettings();
+		downloadData();
+	}, 500, true));
 }
 
 //https://developers.google.com/maps/documentation/javascript/examples/places-searchbox
@@ -196,7 +201,13 @@ function rgeocode(marker, retry, callback){
 }
 
 function renderData(){
-	if(oSettings.format == 'oJSON'){
+	var formattedData = createData(oSettings.format);
+	$('#outputBox').val(formattedData);
+}
+
+function createData(format){
+	var formattedData = "";
+	if(format === "oJSON"){
 		var oDataArray = new Array();
 		
 		for(i = 0; i < markers.length; i++){
@@ -214,23 +225,47 @@ function renderData(){
 			}
 		}
 		
-		$('#outputBox').val(JSON.stringify(oDataArray, null, 2));
-	}else if(oSettings.format == 'oCSV'){
-		var oDataString = "";
+		formattedData = JSON.stringify(oDataArray, null, 2);
+	}else if(format === "oCSV"){
 		
 		for(i = 0; i < markers.length; i++){
 			if(markers[i] != null){
 				var marker = markers[i];
 				if(oSettings.oLat)
-					oDataString += '\"' + marker.lat + '\"';
+					formattedData += '\"' + marker.lat + '\"';
 				if(oSettings.oLong)
-					oDataString += ', \"' + marker.lng + '\"';
+					formattedData += ', \"' + marker.lng + '\"';
 				if(oSettings.oAddr)
-					oDataString += ', \"' + marker.addr + '\"';
+					formattedData += ', \"' + marker.addr + '\"';
 				
-				oDataString += '\n';
+				formattedData += '\n';
 			}
 		}
-		$('#outputBox').val(oDataString);
 	}
+	
+	return formattedData;
+}
+
+function downloadData(){
+	var formattedData = createData(oSettings.format);
+	var downloadElement = document.createElement('a');
+	
+	var mimeType = "text/plain";
+	var extension = ".txt";
+	
+	if(oSettings.format === "oJSON"){
+		mimeType = "application/json";
+		extension = ".json";
+	}else if(oSettings.format === "oCSV"){
+		mimeType = "text/csv";
+		extension = ".csv";
+	}
+	
+	downloadElement.setAttribute("href", ("data:" + mimeType + ",")
+									+ encodeURIComponent(formattedData));
+	downloadElement.setAttribute("download", ("geolocationPoints_" + Date.now() + extension));
+	downloadElement.setAttribute("target", "_blank");
+	document.body.appendChild(downloadElement);//The click won't fire till its added to the DOM
+	downloadElement.click();
+	document.body.removeChild(downloadElement);
 }
