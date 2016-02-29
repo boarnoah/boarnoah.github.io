@@ -263,7 +263,7 @@ function downloadData(){
 	
 	downloadElement.setAttribute("href", ("data:" + mimeType + ",")
 									+ encodeURIComponent(formattedData));
-	downloadElement.setAttribute("download", ("geolocationPoints_" + Date.now() + extension));
+	downloadElement.setAttribute("download", ("boarnoah_map_" + Date.now() + extension));
 	downloadElement.setAttribute("target", "_blank");
 	document.body.appendChild(downloadElement);//The click won't fire till its added to the DOM
 	downloadElement.click();
