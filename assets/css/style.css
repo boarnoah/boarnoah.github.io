@@ -367,7 +367,32 @@ a:hover {
   content: "\f1b6";
 }
 
+.fa-map:before{
+	content: "\f279";
+}
+
+.fa-user-secret:before{
+	content: "\f21b";
+}
+
+.fa-puzzle-piece:before{
+	content: "\f12e";
+}
+
+.fa-home:before{
+	content: "\f015";
+}
+
+.fa-archive:before{
+	content: "\f187";
+}
+
 .fa-plus:before{
   content: "\f067";
   color: #859900;
+}
+
+.fa-plus-disabled:before{
+	content: "\f067";
+	color: #586e75;
 }
