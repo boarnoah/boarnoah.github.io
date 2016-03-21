@@ -158,7 +158,9 @@ h3 {
 	font-size: 1.2em;
 	padding: 2px 4px;
 }
-
+#projectDropDownList {
+	padding: 0px;
+}
 
 
 /*** Posts ***/
@@ -395,4 +397,8 @@ a:hover {
 .fa-plus-disabled:before{
 	content: "\f067";
 	color: #586e75;
+}
+
+.fa-caret-down:before{
+	content: "\f0d7";
 }

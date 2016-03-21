@@ -8,9 +8,24 @@ $(document).ready(function() {
 	var o = $(this);
 	if( ! o.attr('title') && o.attr('alt') ) o.attr('title', o.attr('alt') );
 	});
+	
+	hideDropDown();
 });
 
-//Other js 
+//Hides the submenu and adds hover dropdown to it
+function hideDropDown(){
+	$('#projectDropDownList:visible').slideUp(1);
+	
+	//Add hover dropdown functionality
+	$('#projectDropDown').hover(
+		function(){
+			$('#projectDropDownList:hidden').slideDown();
+		},
+		function(){
+			$('#projectDropDownList:visible').slideUp();
+		}
+	);
+}
 
 //Utilities
 //Debounce out of underscore.js ty  https://davidwalsh.name/javascript-debounce-function
