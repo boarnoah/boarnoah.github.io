@@ -1,14 +1,14 @@
-var map;
+(function(){var map;
 var geocoder;
 var inputBox;
 var searchBox;
 
-var markers = new Array();
+var markers = [];
 var outputData;
 var oSettings = {};
 
 function Marker(e){
-	var e = e ? e : null;
+	e = e ? e : null;
 	var gMarker = e.gMarker ? e.gMarker : null;
 	var key = e.key ? e.key : null;
 	var lat = e.lat ? e.lat : null;
@@ -30,15 +30,15 @@ function loadMap(){
 		center: {lat: 0, lng: 0},
 		zoom: 2
 	});
-	geocoder = new google.maps.Geocoder;
-	
+	geocoder = new google.maps.Geocoder();
+
 	initSearchbar();
 	initMarkerEvent();
 	updateSettings();
-	
+
 	$('#dataForm').change(function(){
 		updateSettings();
-		
+
 		if(oSettings.needGeoCode){
 			batchGeocode();
 		}else{
@@ -49,7 +49,7 @@ function loadMap(){
 		updateSettings();
 		renderData();
 	});
-	
+
 	$('#downloadBtn').click($.b_debounce(function(){
 		updateSettings();
 		downloadData();
@@ -62,22 +62,22 @@ function initSearchbar(){
 	inputBox = document.getElementById('pac-input');
 	searchBox = new google.maps.places.SearchBox(inputBox);
 	map.controls[google.maps.ControlPosition.TOP_LEFT].push(inputBox);
-	
+
 	// Bias the SearchBox results towards current map's viewport.
 	map.addListener('bounds_changed', function() {
 		searchBox.setBounds(map.getBounds());
 	});
-	
+
 	searchBox.addListener('places_changed', function() {
 		var places = searchBox.getPlaces();
 
-		if (places.length == 0) {
+		if (places.length === 0) {
 		  return;
 		}
-		
+
 		// For each place, get the icon, name and location.
 		var bounds = new google.maps.LatLngBounds();
-		
+
 		places.forEach(function(place) {
 		  if (place.geometry.viewport) {
 			// Only geocodes have viewport.
@@ -86,7 +86,7 @@ function initSearchbar(){
 			bounds.extend(place.geometry.location);
 		  }
 		});
-		
+
 		map.fitBounds(bounds);
 	});
 }
@@ -94,7 +94,7 @@ function initSearchbar(){
 function initMarkerEvent(){
 	map.addListener('click', function(e){
 		var marker = new Marker({});
-		
+
 		var gMarker = new google.maps.Marker({
 			position: e.latLng,
 			map: map,
@@ -107,13 +107,13 @@ function initMarkerEvent(){
 			updateSettings();
 			renderData();
 		});
-		
+
 		marker.gMarker = gMarker;
 		marker.lat = gMarker.getPosition().lat();
 		marker.lng = gMarker.getPosition().lng();
 		markers.push(marker);
 		marker.key = markers.length - 1;
-		
+
 		if(oSettings.needGeoCode){
 			renderData(); //To add point, rerendered when geocode data comes in
 			rgeocode(marker, 3, function(e){
@@ -133,12 +133,12 @@ function initMarkerEvent(){
 function batchGeocode(callback){
 	var geocodeNum = 0;
 	for(i = 0; i < markers.length; i++){
-		if(markers[i] != null && markers[i].addr == null){
+		if(markers[i] !== null && markers[i].addr === null){
 			batchSingleRequest(i, geocodeNum, callback);
 			geocodeNum++;
 		}
 	}
-	
+
 	renderData(); //Render for when all points are already geocoded (else its rendered as par to async code)
 }
 function batchSingleRequest(i, geocodeNum, callback){
@@ -161,9 +161,9 @@ function updateSettings(){
 
 	oSettings.oLat = $('#oLat').prop('checked');
 	oSettings.oLong = $('#oLong').prop('checked');
-	
+
 	oSettings.oAddr = $('#oAddr').prop('checked');
-	
+
 	//Address info will require reverse geocoding on the lat/long data
 	if(oSettings.oAddr === true)
 		oSettings.needGeoCode = true;
@@ -179,7 +179,7 @@ function rgeocode(marker, retry, callback){
 			marker.raw = results;
 			if(results[0])
 				marker.addr = results[0].formatted_address;
-			
+
 			callback({sucess : true});
 		}else if(status === google.maps.GeocoderStatus.ZERO_RESULTS){
 			marker.raw = results;
@@ -207,14 +207,15 @@ function renderData(){
 
 function createData(format){
 	var formattedData = "";
+	var marker;
 	if(format === "oJSON"){
-		var oDataArray = new Array();
-		
+		var oDataArray = [];
+
 		for(i = 0; i < markers.length; i++){
-			if(markers[i] != null){
+			if(markers[i] !== null){
 				var node = {};
-				var marker = markers[i];
-				
+				marker = markers[i];
+
 				if(oSettings.oLat)
 					node.Latitude = marker.lat;
 				if(oSettings.oLong)
@@ -224,35 +225,35 @@ function createData(format){
 				oDataArray.push(node);
 			}
 		}
-		
+
 		formattedData = JSON.stringify(oDataArray, null, 2);
 	}else if(format === "oCSV"){
-		
+
 		for(i = 0; i < markers.length; i++){
-			if(markers[i] != null){
-				var marker = markers[i];
+			if(markers[i] !== null){
+				marker = markers[i];
 				if(oSettings.oLat)
 					formattedData += '\"' + marker.lat + '\"';
 				if(oSettings.oLong)
 					formattedData += ', \"' + marker.lng + '\"';
 				if(oSettings.oAddr)
 					formattedData += ', \"' + marker.addr + '\"';
-				
+
 				formattedData += '\n';
 			}
 		}
 	}
-	
+
 	return formattedData;
 }
 
 function downloadData(){
 	var formattedData = createData(oSettings.format);
 	var downloadElement = document.createElement('a');
-	
+
 	var mimeType = "text/plain";
 	var extension = ".txt";
-	
+
 	if(oSettings.format === "oJSON"){
 		mimeType = "application/json";
 		extension = ".json";
@@ -260,12 +261,12 @@ function downloadData(){
 		mimeType = "text/csv";
 		extension = ".csv";
 	}
-	
-	downloadElement.setAttribute("href", ("data:" + mimeType + ",")
-									+ encodeURIComponent(formattedData));
+
+	downloadElement.setAttribute("href", ("data:" + mimeType + ",") + encodeURIComponent(formattedData));
 	downloadElement.setAttribute("download", ("boarnoah_map_" + Date.now() + extension));
 	downloadElement.setAttribute("target", "_blank");
 	document.body.appendChild(downloadElement);//The click won't fire till its added to the DOM
 	downloadElement.click();
 	document.body.removeChild(downloadElement);
 }
+})();
