@@ -379,6 +379,10 @@ a:hover {
   content: "\f1b6";
 }
 
+.fa-linkedin:before{
+  content: "\f0e1";
+}
+
 .fa-map:before{
 	content: "\f279";
 }
