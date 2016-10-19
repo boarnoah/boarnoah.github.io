@@ -1,0 +1,14 @@
+body {
+	background-color: #EEEEEE;
+}
+
+input {
+	border-radius: 0.25em;
+	border-width: 0.025em;
+}
+
+.header,
+.footer {
+	background-color: #B7B7B7;
+	text-align: center;
+}
