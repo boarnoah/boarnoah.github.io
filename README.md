@@ -1,5 +1,5 @@
 # Personal Website
-Personal website [boarnoah.github.io](www.google.com) built with Jekyll
+Personal website [www.adipa.me / boarnoah.github.io](http://www.adipa.me/) built with Jekyll
 
 ## dependencies
 [Jekyll](https://jekyllrb.com/)  3.0.1
