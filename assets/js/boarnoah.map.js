@@ -247,7 +247,7 @@
             formattedData = JSON.stringify(oDataArray, null, 2);
         } else if (format === "oCSV") {
 
-            for (i = 0; i < markers.length; i++) {
+            for (var i = 0; i < markers.length; i++) {
                 if (markers[i] !== null) {
                     marker = markers[i];
                     if (oSettings.oLat)
