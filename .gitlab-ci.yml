@@ -6,6 +6,7 @@ test:
   stage: test
   script:
   - gem install jekyll
+  - gem install jekyll jekyll-paginate
   - jekyll build -d test
   artifacts:
     paths:
@@ -17,6 +18,7 @@ pages:
   stage: deploy
   script:
   - gem install jekyll
+  - gem install jekyll jekyll-paginate
   - jekyll build -d public
   artifacts:
     paths:
