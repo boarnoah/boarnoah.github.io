@@ -137,7 +137,7 @@
     // for when the user decides to enable geocoded details AFTER they marked points >.<
     function batchGeocode(callback) {
         var geocodeNum = 0;
-        for (i = 0; i < markers.length; i++) {
+        for (var i = 0; i < markers.length; i++) {
             if (markers[i] !== null && markers[i].addr === null) {
                 batchSingleRequest(i, geocodeNum, callback);
                 geocodeNum++;
