@@ -1,6 +1,8 @@
 # Personal Website
 Personal website [www.adipa.me / boarnoah.github.io](http://www.adipa.me/) built with Jekyll
 
+On Gitlab (with https)
+
 ## dependencies
 [Jekyll](https://jekyllrb.com/)  3.0.1
 
