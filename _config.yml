@@ -2,7 +2,7 @@ name: Adipa Wijayathilaka
 url: http://example.org
 description: Software developer and jack of all trades :)
 
-gems: [jekyll-paginate]
+plugins: [jekyll-paginate]
 
 permalink: /:year/:month/:day/:title/
 paginate: 10
