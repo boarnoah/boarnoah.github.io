@@ -1,0 +1,10 @@
+version: 0.2
+
+phases:
+  build:
+    commands:
+      - jekyll build
+artifacts:
+  files:
+    - '**/*'
+  base-directory: '_site'
