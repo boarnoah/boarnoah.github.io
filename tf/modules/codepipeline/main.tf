@@ -27,8 +27,12 @@ data "aws_iam_policy_document" "codepipeline_exec" {
       "s3:PutObject"
     ]
     resources = [
+      // Build artifacts
       "${aws_s3_bucket.this.arn}",
-      "${aws_s3_bucket.this.arn}/*"
+      "${aws_s3_bucket.this.arn}/*",
+      // Deployed site
+      "${var.site_bucket_arn}",
+      "${var.site_bucket_arn}/*"
     ]
   }
   statement {
@@ -177,6 +181,22 @@ resource "aws_codepipeline" "this" {
       output_artifacts = ["build"]
       configuration = {
         ProjectName = "${var.namespace}-${var.app}"
+      }
+    }
+  }
+  // https://docs.aws.amazon.com/codepipeline/latest/userguide/reference-pipeline-structure.html#action-requirements
+  stage {
+    name = "Deploy"
+    action {
+      category        = "Deploy"
+      name            = "Deploy"
+      owner           = "AWS"
+      provider        = "S3"
+      version         = "1"
+      input_artifacts = ["build"]
+      configuration = {
+        BucketName = var.site_bucket_name
+        Extract    = true
       }
     }
   }
