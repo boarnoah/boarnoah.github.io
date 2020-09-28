@@ -6,16 +6,12 @@ variable "app" {
   type = string
 }
 
-variable "aws_region" {
-  type = string
-}
-
 variable "domain" {
   type        = string
   description = "Domain name for website"
 }
 
-variable "site_acm_arn" {
+variable "zone_id" {
   type        = string
-  description = "ARN of ACM Certificate for website"
+  description = "ID of Route53 Zone in which to place these certificate validation records"
 }

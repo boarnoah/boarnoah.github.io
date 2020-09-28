@@ -56,6 +56,9 @@ resource "aws_cloudfront_distribution" "this" {
     }
   }
   viewer_certificate {
-    cloudfront_default_certificate = true
+    acm_certificate_arn      = var.site_acm_arn
+    minimum_protocol_version = "TLSv1.2_2018"
+    ssl_support_method       = "sni-only"
   }
+  aliases = [var.domain, "www.${var.domain}"]
 }
