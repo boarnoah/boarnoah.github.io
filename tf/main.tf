@@ -4,6 +4,15 @@ provider "aws" {
   version = "~> 2.70"
 }
 
+module "networking" {
+  source           = "./modules/networking"
+  app              = var.app
+  namespace        = var.namespace
+  domain           = var.domain
+  site_cdn_address = module.static_site.site_cdn_address
+  site_cdn_zone    = module.static_site.site_cdn_zone
+}
+
 module "static_site" {
   source     = "./modules/static_site"
   app        = var.app
