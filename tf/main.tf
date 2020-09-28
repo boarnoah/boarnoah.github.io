@@ -4,6 +4,13 @@ provider "aws" {
   version = "~> 2.70"
 }
 
+provider "aws" {
+  region  = "us-east-1"
+  profile = var.aws_profile
+  version = "~> 2.70"
+  alias   = "us_e_1"
+}
+
 module "networking" {
   source           = "./modules/networking"
   app              = var.app
@@ -13,11 +20,23 @@ module "networking" {
   site_cdn_zone    = module.static_site.site_cdn_zone
 }
 
+module "https" {
+  source    = "./modules/https"
+  app       = var.app
+  namespace = var.namespace
+  domain    = var.domain
+  zone_id   = module.networking.zone_id
+  providers = {
+    aws = aws.us_e_1
+  }
+}
 module "static_site" {
-  source     = "./modules/static_site"
-  app        = var.app
-  namespace  = var.namespace
-  aws_region = var.aws_region
+  source       = "./modules/static_site"
+  app          = var.app
+  namespace    = var.namespace
+  aws_region   = var.aws_region
+  domain       = var.domain
+  site_acm_arn = module.https.site_acm_arn
 }
 
 module "codepipeline" {
