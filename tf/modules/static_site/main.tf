@@ -2,6 +2,10 @@ locals {
   site_origin_id = "${var.namespace}=${var.app}-static-site"
 }
 
+provider "aws" {
+  alias = "us_e_1"
+}
+
 resource "aws_s3_bucket" "this" {
   bucket = "${var.namespace}-${var.app}-statics"
 }
@@ -10,7 +14,7 @@ resource "aws_cloudfront_origin_access_identity" "this" {
   comment = "${var.namespace}-${var.app} cloudfront access"
 }
 
-data "aws_iam_policy_document" "this" {
+data "aws_iam_policy_document" "cdn_s3_access" {
   statement {
     actions   = ["s3:GetObject"]
     resources = ["${aws_s3_bucket.this.arn}/*"]
@@ -23,7 +27,42 @@ data "aws_iam_policy_document" "this" {
 
 resource "aws_s3_bucket_policy" "this" {
   bucket = aws_s3_bucket.this.bucket
-  policy = data.aws_iam_policy_document.this.json
+  policy = data.aws_iam_policy_document.cdn_s3_access.json
+}
+
+# Friendly URL rewrite lambda
+data "aws_iam_policy_document" "prettify_assume" {
+  statement {
+    actions = ["sts:AssumeRole"]
+    principals {
+      identifiers = ["lambda.amazonaws.com", "edgelambda.amazonaws.com"]
+      type        = "Service"
+    }
+    effect = "Allow"
+  }
+}
+
+resource "aws_iam_role" "this" {
+  name               = "${var.app}-${var.namespace}-prettify-url-exec"
+  description        = "Exec role for lambda that prettifies URLs for website"
+  assume_role_policy = data.aws_iam_policy_document.prettify_assume.json
+}
+
+data "archive_file" "main" {
+  type        = "zip"
+  source_file = "${path.module}/rewrite-lambda/index.js"
+  output_path = "${path.module}/rewrite-lambda/index.zip"
+}
+
+resource "aws_lambda_function" "this" {
+  function_name    = "${var.namespace}-${var.app}-cdn-prettify-urls"
+  handler          = "index.handler"
+  role             = aws_iam_role.this.arn
+  runtime          = "nodejs12.x"
+  filename         = data.archive_file.main.output_path
+  source_code_hash = data.archive_file.main.output_base64sha256
+  publish          = true
+  provider         = aws.us_e_1
 }
 
 resource "aws_cloudfront_distribution" "this" {
@@ -40,6 +79,10 @@ resource "aws_cloudfront_distribution" "this" {
       cookies {
         forward = "none"
       }
+    }
+    lambda_function_association {
+      event_type = "origin-request"
+      lambda_arn = aws_lambda_function.this.qualified_arn
     }
   }
   origin {

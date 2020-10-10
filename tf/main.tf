@@ -35,6 +35,10 @@ module "static_site" {
   aws_region   = var.aws_region
   domain       = var.domain
   site_acm_arn = module.https.site_acm_arn
+  providers = {
+    aws        = aws
+    aws.us_e_1 = aws.us_e_1
+  }
 }
 
 module "codepipeline" {
