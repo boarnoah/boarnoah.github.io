@@ -1,13 +1,11 @@
 provider "aws" {
   region  = var.aws_region
   profile = var.aws_profile
-  version = "~> 2.70"
 }
 
 provider "aws" {
   region  = "us-east-1"
   profile = var.aws_profile
-  version = "~> 2.70"
   alias   = "us_e_1"
 }
 

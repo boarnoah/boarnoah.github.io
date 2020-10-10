@@ -1,6 +1,5 @@
 resource "aws_s3_bucket" "this" {
   bucket = "${var.namespace}-${var.app}-codepipeline"
-  region = var.aws_region
 }
 
 resource "aws_codecommit_repository" "this" {

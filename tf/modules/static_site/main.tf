@@ -4,7 +4,6 @@ locals {
 
 resource "aws_s3_bucket" "this" {
   bucket = "${var.namespace}-${var.app}-statics"
-  region = var.aws_region
 }
 
 resource "aws_cloudfront_origin_access_identity" "this" {
