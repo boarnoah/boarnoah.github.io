@@ -5,35 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Adipa Wijayathilaka</title>
-
-    <style>
-        html,
-        body {
-            height: 99dvh;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            padding-left: 1dvh;
-            padding-right: 1dvh;
-        }
-
-        main {
-            flex: 1;
-            width: 100%;
-            max-width: 600px;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            text-align: left;
-        }
-
-        footer {
-            text-align: center;
-        }
-    </style>
+    {{ with resources.Get "css/index.css" }}
+        <link rel="stylesheet" href="{{ .RelPermalink }}">
+    {{ end }}
 </head>
 
 <body>
